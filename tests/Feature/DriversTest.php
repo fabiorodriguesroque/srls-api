@@ -35,7 +35,7 @@ test('Authenticated user can create drivers to his own league.', function () {
     ]);
 
   $response
-    ->assertStatus(201)
+    ->assertCreated()
     ->assertJson([
       'data' => [
         'league_id' => $league->id,
@@ -45,7 +45,22 @@ test('Authenticated user can create drivers to his own league.', function () {
     ]);
 });
 
-test('Authenticated user can not create drivers to other leagues.', function () {})->todo();
+test('Authenticated user can not create drivers to other leagues.', function () {
+  $externalUser = User::factory()->create();
+  $externalUserLeague = League::factory()->create(['user_id' => $externalUser->id]);
+
+  $user = User::factory()->create();
+
+  $response = $this->actingAs($user)
+    ->postJson('/api/drivers', [
+      'league_id' => $externalUserLeague->id,
+      'nickname' => 'fabioroque92',
+      'name' => 'Fábio Roque',
+    ]);
+
+  $response
+    ->assertForbidden();
+});
 
 it('possible create two drivers with the same name but different nicknames.', function () {
   $user = User::factory()->create();
@@ -90,7 +105,6 @@ it('not possible create two drivers with the same nickname.', function () {
 
 it('not possible create driver without be assigned to a league.', function () {
   $user = User::factory()->create();
-  $league = League::factory()->create(['user_id' => $user->id]);
 
   $response = $this->actingAs($user)
     ->postJson('/api/drivers', [

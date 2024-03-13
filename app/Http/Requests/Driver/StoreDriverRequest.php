@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Driver;
 
+use App\Models\League;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreDriverRequest extends FormRequest
@@ -11,7 +12,11 @@ class StoreDriverRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->league_id
+            ? League::where('id', $this->league_id)
+                ->where('user_id', auth()->user()->id)
+                ->exists()
+            : true;
     }
 
     /**

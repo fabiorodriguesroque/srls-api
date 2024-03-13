@@ -23,8 +23,12 @@ class DriverController extends Controller
      */
     public function store(StoreDriverRequest $request, CreateDriver $action)
     {
+
         try {
             $driver = $action->handle($request->validated());
+
+            $this->authorize('create', $driver);
+
             return new DriverResource($driver);
         } catch (\Throwable $th) {
             //throw $th;
