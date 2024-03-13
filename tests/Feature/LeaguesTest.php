@@ -5,20 +5,11 @@ use App\Models\User;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('All league api endpoints unavailable to guest users.', function () {
-  $this->getJson('/api/leagues')
-    ->assertUnauthorized();
-
-  $this->postJson('/api/leagues')
-    ->assertUnauthorized();
-
-  $this->getJson('/api/leagues/1')
-    ->assertUnauthorized();
-
-  $this->putJson('/api/leagues/1')
-    ->assertUnauthorized();
-
-  $this->deleteJson('/api/leagues/1')
-    ->assertUnauthorized();
+  $this->getJson('/api/leagues')->assertUnauthorized();
+  $this->postJson('/api/leagues')->assertUnauthorized();
+  $this->getJson('/api/leagues/1')->assertUnauthorized();
+  $this->putJson('/api/leagues/1')->assertUnauthorized();
+  $this->deleteJson('/api/leagues/1')->assertUnauthorized();
 });
 
 test('Authenticated user can read all leagues.', function () {

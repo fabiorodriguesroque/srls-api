@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[ObservedBy([LeagueObserver::class])]
 class League extends Model
@@ -16,8 +17,21 @@ class League extends Model
 
     protected $fillable = ['name', 'user_id'];
 
+    /**
+     * User that owns the league.
+     * 
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Drivers that belongs to the league.
+     * 
+     */
+    public function drivers(): HasMany
+    {
+        return $this->hasMany(Driver::class);
     }
 }
