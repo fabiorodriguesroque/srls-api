@@ -136,11 +136,45 @@ test('Authenticated user can read all drivers from any league.', function () {
     );
 });
 
-test('Authenticated user can read one driver from any league.', function () {})->todo();
+test('Authenticated user can read one driver from any league.', function () {
+  $user = User::factory()->create();
+  $league = League::factory()->create(['user_id' => $user->id]);
+  $driver = Driver::factory()->create(['league_id' => $league->id]);
 
-test('Authenticated user can update drivers from his own league.', function () {})->todo();
+  $externalUser = User::factory()->create();
+  $externalLeague = League::factory()->create(['user_id' => $externalUser->id]);
+  $externalDriver = Driver::factory()->create(['league_id' => $externalLeague->id]);
 
-test('Authenticated user can not update drivers from other leagues.', function () {})->todo();
+  $this->actingAs($user)
+    ->getJson('/api/drivers/' . $driver->id)
+    ->assertOk();
+
+  $this->actingAs($user)
+    ->getJson('/api/drivers' . $externalDriver->id)
+    ->assertOk();
+});
+
+test('Authenticated user can update drivers from his own league.', function () {
+
+})->todo();
+
+test('Authenticated user can not update drivers from other leagues.', function () {
+  $user = User::factory()->create();
+  $otherUser = User::factory()->create();
+  $league = League::factory()->create(['user_id' => $otherUser->id]);
+  $driver = Driver::factory()->create([
+    'league_id' => $league->id,
+    'name' => 'Fábio Roque'
+  ]);
+
+  $response = $this->actingAs($user)
+    ->putJson('/api/drivers/' . $driver->id, [
+      'name' => 'Gustavo Graça'
+    ]);
+
+  $response
+    ->assertStatus(403);
+})->todo();
 
 test('Authenticated user can delete drivers from his own league.', function () {})->todo();
 

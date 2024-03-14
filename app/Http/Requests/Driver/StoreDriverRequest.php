@@ -3,12 +3,14 @@
 namespace App\Http\Requests\Driver;
 
 use App\Models\League;
+use App\Rules\LeagueBelongsToUser;
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreDriverRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Authorize only if user is creating a driver to his own league.
      */
     public function authorize(): bool
     {
@@ -27,9 +29,9 @@ class StoreDriverRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'league_id' => 'required|exists:leagues,id',
-            'nickname' => 'required|unique:drivers|max:255',
-            'name' => 'string|max:255'
+            'league_id' => ['required', 'exists:leagues,id'],
+            'nickname' => ['required', 'unique:drivers', 'max:255'],
+            'name' => ['string', 'max:255']
         ];
     }
 }

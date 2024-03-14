@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Actions\Driver\CreateDriver;
 use App\Http\Requests\Driver\StoreDriverRequest;
+use App\Http\Requests\Driver\UpdateDriverRequest;
 use App\Http\Resources\DriverResource;
 use App\Models\Driver;
+use Exception;
 use Illuminate\Http\Request;
 
 class DriverController extends Controller
@@ -33,12 +35,6 @@ class DriverController extends Controller
         } catch (\Throwable $th) {
             //throw $th;
         }
-        // try {
-        //     $league = $action->handle($request->validated());
-        //     return new LeagueResource($league);
-        // } catch (Exception $ex) {
-        //     abort(500, 'Could not create league or assign it to a league manager.');
-        // }
     }
 
     /**
@@ -46,15 +42,22 @@ class DriverController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $league = Driver::findOrFail($id);
+            return new DriverResource($league);
+        } catch (Exception $ex) {
+            abort(404, 'League not found.');
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateDriverRequest $request, string $id)
     {
-        //
+        $driver = Driver::find($id);
+
+        $this->authorize('update', $driver);
     }
 
     /**
